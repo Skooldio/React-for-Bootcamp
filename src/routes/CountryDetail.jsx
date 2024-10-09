@@ -1,7 +1,85 @@
 /* eslint-disable react/prop-types */
+import { useState, useEffect } from "react";
 import { useParams } from "react-router-dom";
+import { Button, Divider, Typography } from "@mui/material";
 
 export default function CountryDetail() {
-  const { id } = useParams();
-  return <div>Hello {id}</div>;
+  const { name } = useParams();
+  const [countryDetail, setCountryDetail] = useState(null);
+  const [loading, setLoading] = useState(countryDetail ? false : true);
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      try {
+        const res = await fetch(`https://restcountries.com/v3.1/name/${name}`);
+        const data = await res.json();
+        setCountryDetail(data[0]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, [name]);
+  if (loading) {
+    return "loading...";
+  }
+  return (
+    <main
+      style={{
+        maxWidth: 400,
+        margin: "auto",
+      }}
+    >
+      <Button sx={{ marginTop: "1rem" }} onClick={() => setCountryDetail(null)}>
+        All countries
+      </Button>
+      <Divider sx={{ marginBlock: "1rem" }} />
+      <Typography
+        variant="h1"
+        sx={{
+          fontSize: "3rem",
+          fontWeight: 500,
+          marginTop: "0.5rem",
+        }}
+      >
+        {countryDetail.name.common}
+      </Typography>
+      <Typography variant="overline" sx={{ marginBottom: "1rem" }}>
+        {countryDetail.region}
+      </Typography>
+
+      <img
+        src={countryDetail.flags.svg}
+        alt={countryDetail.flags.alt}
+        width="100%"
+        style={{ aspectRatio: 2 }}
+      />
+      <Typography variant="h3" sx={{ fontSize: "1.5rem", marginTop: "1rem" }}>
+        Capital
+      </Typography>
+      <ul>
+        {countryDetail.capital
+          ? countryDetail.capital?.map((item) => <li key={item}>{item}</li>)
+          : "-"}
+      </ul>
+
+      <Typography variant="h3" sx={{ fontSize: "1.5rem", marginTop: "1rem" }}>
+        Timezones
+      </Typography>
+      <ul>
+        {countryDetail.timezones
+          ? countryDetail.timezones?.map((item) => <li key={item}>{item}</li>)
+          : "-"}
+      </ul>
+
+      <Typography variant="h3" sx={{ fontSize: "1.5rem", marginTop: "1rem" }}>
+        Borders
+      </Typography>
+      <ul>
+        {countryDetail.borders
+          ? countryDetail.borders?.map((item) => <li key={item}>{item}</li>)
+          : "-"}
+      </ul>
+    </main>
+  );
 }
