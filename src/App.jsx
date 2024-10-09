@@ -234,7 +234,10 @@ function App() {
                         setCountryDetail(country);
                       }}
                     >
-                      <Link to={`/countries/${country.name.common}`}>
+                      <Link
+                        to={`/countries/${country.name.common}`}
+                        state={country}
+                      >
                         {elements.map((elm, index) =>
                           index === 0 ? (
                             elm

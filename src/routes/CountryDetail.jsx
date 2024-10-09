@@ -1,11 +1,12 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useLocation, Link } from "react-router-dom";
 import { Button, Divider, Typography } from "@mui/material";
 
 export default function CountryDetail() {
   const { name } = useParams();
-  const [countryDetail, setCountryDetail] = useState(null);
+  const { state } = useLocation();
+  const [countryDetail, setCountryDetail] = useState(state || null);
   const [loading, setLoading] = useState(countryDetail ? false : true);
   const [error, setError] = useState(null);
   useEffect(() => {
@@ -27,7 +28,7 @@ export default function CountryDetail() {
     }
     fetchData();
   }, [name]);
-  if (loading) {
+  if (loading && !countryDetail) {
     return "loading...";
   }
   if (error) {
