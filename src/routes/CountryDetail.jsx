@@ -7,13 +7,20 @@ export default function CountryDetail() {
   const { name } = useParams();
   const [countryDetail, setCountryDetail] = useState(null);
   const [loading, setLoading] = useState(countryDetail ? false : true);
+  const [error, setError] = useState(null);
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
       try {
         const res = await fetch(`https://restcountries.com/v3.1/name/${name}`);
         const data = await res.json();
+        if (!res.ok || !data.length) {
+          setError({ message: "not-found" });
+          return;
+        }
         setCountryDetail(data[0]);
+      } catch (error) {
+        setError(error);
       } finally {
         setLoading(false);
       }
@@ -22,6 +29,12 @@ export default function CountryDetail() {
   }, [name]);
   if (loading) {
     return "loading...";
+  }
+  if (error) {
+    if (error?.message === "not-found ") {
+      return "No country information";
+    }
+    return "Something went wrong";
   }
   return (
     <main
