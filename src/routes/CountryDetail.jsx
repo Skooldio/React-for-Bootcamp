@@ -1,5 +1,7 @@
 /* eslint-disable react/prop-types */
+import { useParams } from "react-router-dom";
 
 export default function CountryDetail() {
-  return <div>Hello</div>;
+  const { id } = useParams();
+  return <div>Hello {id}</div>;
 }
