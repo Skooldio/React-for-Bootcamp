@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { logout } from "./auth";
 
 function randomSixDigits() {
   return [...Array(6)].map(() => Math.floor(Math.random() * 10));
@@ -55,6 +56,7 @@ function IntervalNumber() {
 
 function App() {
   const [accounts, setAccounts] = useState([{ name: "Google", code: "1" }]);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -84,6 +86,18 @@ function App() {
     }
   }, [location, navigate]);
 
+  const handleLogout = async () => {
+    try {
+      setIsLoggingOut(true);
+      await logout();
+      navigate("/login");
+    } catch (error) {
+      console.error("Error logging out:", error);
+    } finally {
+      setIsLoggingOut(false);
+    }
+  };
+
   return (
     <div style={{ maxWidth: 400, margin: "auto" }}>
       <div style={{ display: "flex", alignItems: "center" }}>
@@ -99,10 +113,29 @@ function App() {
             fontWeight: 500,
             borderRadius: "4px",
             cursor: "pointer",
+            marginRight: "0.5rem",
           }}
           onClick={() => navigate("/accounts/new")}
         >
           New
+        </button>
+        <button
+          style={{
+            display: "flex",
+            backgroundColor: "red",
+            color: "#fff",
+            border: "none",
+            padding: "0.5rem 1rem",
+            fontSize: "1rem",
+            fontWeight: 500,
+            borderRadius: "4px",
+            cursor: isLoggingOut ? "not-allowed" : "pointer",
+            opacity: isLoggingOut ? 0.7 : 1,
+          }}
+          onClick={handleLogout}
+          disabled={isLoggingOut}
+        >
+          {isLoggingOut ? "Bye..." : "Logout"}
         </button>
       </div>
       <ul
