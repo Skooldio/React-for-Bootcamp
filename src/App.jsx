@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Link } from "react-router-dom";
 
 function randomSixDigits() {
   return [...Array(6)].map(() => Math.floor(Math.random() * 10));
@@ -59,15 +59,28 @@ function App() {
   const location = useLocation();
 
   useEffect(() => {
-    if (location.state && location.state.name && location.state.code) {
-      setAccounts((prev) =>
-        // effect can run more than once, so need to check duplicate before adding new account
-        prev.find((item) => item.code === location.state.code)
-          ? prev
-          : [...prev, { name: location.state.name, code: location.state.code }]
-      );
-      // Reset location.state after adding new account
-      navigate(location.pathname, { replace: true });
+    if (location.state) {
+      if (location.state.action === "edit" && location.state.data) {
+        setAccounts((prev) =>
+          prev.map((item) =>
+            item.code === location.state.data.code ? location.state.data : item
+          )
+        );
+        // Reset location.state after adding new account
+        navigate(location.pathname, { replace: true });
+      } else if (location.state.name && location.state.code) {
+        setAccounts((prev) =>
+          // effect can run more than once, so need to check duplicate before adding new account
+          prev.find((item) => item.code === location.state.code)
+            ? prev
+            : [
+                ...prev,
+                { name: location.state.name, code: location.state.code },
+              ]
+        );
+        // Reset location.state after adding new account
+        navigate(location.pathname, { replace: true });
+      }
     }
   }, [location, navigate]);
 
@@ -109,7 +122,15 @@ function App() {
               paddingBlock: "0.5rem",
             }}
           >
-            <div style={{ fontSize: "1.25rem" }}>{item.name}</div>
+            <div style={{ fontSize: "1.25rem" }}>
+              <Link
+                to="/accounts/edit"
+                state={item}
+                style={{ textDecoration: "none" }}
+              >
+                {item.name}
+              </Link>
+            </div>
             <IntervalNumber />
           </li>
         ))}
