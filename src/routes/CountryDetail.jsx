@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useState, useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { Button, Divider, Typography } from "@mui/material";
 
 export default function CountryDetail() {
@@ -43,7 +43,7 @@ export default function CountryDetail() {
         margin: "auto",
       }}
     >
-      <Button sx={{ marginTop: "1rem" }} onClick={() => setCountryDetail(null)}>
+      <Button component={Link} to="/" sx={{ marginTop: "1rem" }}>
         All countries
       </Button>
       <Divider sx={{ marginBlock: "1rem" }} />
